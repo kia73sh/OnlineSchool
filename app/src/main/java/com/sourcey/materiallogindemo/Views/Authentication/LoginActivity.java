@@ -1,4 +1,4 @@
-package com.sourcey.materiallogindemo.Authentication;
+package com.sourcey.materiallogindemo.Views.Authentication;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -12,17 +12,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sourcey.materiallogindemo.Http.Clients.AuthClient;
+import com.sourcey.materiallogindemo.Models.User;
 import com.sourcey.materiallogindemo.R;
-import com.sourcey.materiallogindemo.SimpleActivity;
-import com.sourcey.materiallogindemo.UI.Components;
+import com.sourcey.materiallogindemo.Views.SimpleActivity;
+import com.sourcey.materiallogindemo.Views.UI.Components;
 
 import butterknife.ButterKnife;
 import butterknife.Bind;
 
 public class LoginActivity extends SimpleActivity {
-
-    private static final String TAG = "LoginActivity";
-    private static final int REQUEST_SIGNUP = 0;
 
     @Bind(R.id.input_email) EditText emailText;
     @Bind(R.id.input_password) EditText passwordText;
@@ -31,31 +30,8 @@ public class LoginActivity extends SimpleActivity {
     @Bind(R.id.text_input_mail) TextInputLayout textInputMail;
     @Bind(R.id.text_input_password) TextInputLayout textInputPassWord;
 
-    private void initUI(){
-        ButterKnife.bind(this);
-        emailText.setTypeface(Components.getIransansFont());
-        passwordText.setTypeface(Components.getIransansFont());
-        signupLink.setTypeface(Components.getIransansFont());
-        loginButton.setTypeface(Components.getIransansFont());
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                login();
-            }
-        });
-
-        signupLink.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // Start the Signup activity
-                Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
-                startActivityForResult(intent, REQUEST_SIGNUP);
-            }
-        });
-    }
+    private static final String TAG = "LoginActivity";
+    private static final int REQUEST_SIGNUP = 0;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,6 +58,32 @@ public class LoginActivity extends SimpleActivity {
         moveTaskToBack(true);
     }
 
+    private void initUI(){
+        ButterKnife.bind(this);
+        emailText.setTypeface(Components.getIransansFont());
+        passwordText.setTypeface(Components.getIransansFont());
+        signupLink.setTypeface(Components.getIransansFont());
+        loginButton.setTypeface(Components.getIransansFont());
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                login();
+            }
+        });
+
+        signupLink.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // Start the Signup activity
+                Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
+                startActivityForResult(intent, REQUEST_SIGNUP);
+            }
+        });
+    }
+
     public void login() {
         Log.d(TAG, "Login");
 
@@ -101,17 +103,23 @@ public class LoginActivity extends SimpleActivity {
         String email = emailText.getText().toString();
         String password = passwordText.getText().toString();
 
-        // TODO: Implement your own authentication logic here.
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
-                        onLoginSuccess();
-                        // onLoginFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);
+        AuthClient.authorization(user, new AuthClient.OnResponseListener() {
+            @Override
+            public void onSuccess() {
+                onLoginSuccess();
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailed(int responseCode) {
+                onLoginFailed();
+                progressDialog.dismiss();
+            }
+        });
     }
 
     public void onLoginSuccess() {

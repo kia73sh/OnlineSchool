@@ -1,4 +1,4 @@
-package com.sourcey.materiallogindemo.Authentication;
+package com.sourcey.materiallogindemo.Views.Authentication;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -10,8 +10,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sourcey.materiallogindemo.Http.Clients.AuthClient;
+import com.sourcey.materiallogindemo.Models.User;
 import com.sourcey.materiallogindemo.R;
-import com.sourcey.materiallogindemo.UI.Components;
+import com.sourcey.materiallogindemo.Views.UI.Components;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -73,22 +75,28 @@ public class SignupActivity extends AppCompatActivity {
         progressDialog.setMessage("در حال ثبت نام ...");
         progressDialog.show();
 
+        User user = new User();
         String name = nameText.getText().toString();
         String email = emailText.getText().toString();
         String password = passwordText.getText().toString();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(password);
 
-        // TODO: Implement your own signup logic here.
+        AuthClient.authorization(user, new AuthClient.OnResponseListener() {
+            @Override
+            public void onSuccess() {
+                onSignupSuccess();
+                progressDialog.dismiss();
+            }
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
-                        onSignupSuccess();
-                        // onSignupFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);
+            @Override
+            public void onFailed(int responseCode) {
+                onSignupFailed();
+                progressDialog.dismiss();
+            }
+        });
+
     }
 
     public void onSignupSuccess() {

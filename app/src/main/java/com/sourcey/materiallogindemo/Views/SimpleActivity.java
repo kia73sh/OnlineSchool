@@ -1,4 +1,4 @@
-package com.sourcey.materiallogindemo;
+package com.sourcey.materiallogindemo.Views;
 
 import android.content.Context;
 import android.os.Bundle;

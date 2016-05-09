@@ -1,8 +1,8 @@
-package com.sourcey.materiallogindemo.UI;
+package com.sourcey.materiallogindemo.Views.UI;
 
 import android.graphics.Typeface;
 
-import com.sourcey.materiallogindemo.SimpleActivity;
+import com.sourcey.materiallogindemo.Views.SimpleActivity;
 
 public class Components {
 
