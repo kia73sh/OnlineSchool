@@ -10,7 +10,7 @@ public class User extends Model{
     private String email;
     private String password;
 
-    public JSONObject converToJson(){
+    public JSONObject convertToJson(){
         return createJson(this);
     }
 

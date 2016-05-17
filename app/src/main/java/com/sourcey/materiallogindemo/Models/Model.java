@@ -19,6 +19,10 @@ public class Model {
         return Json.createJson(buildGson().toJson(object));
     }
 
+    public static <T> T createFromJson(JSONObject json, Class<T> clazz) {
+        return buildGson().fromJson(json.toString(), clazz);
+    }
+
     public static class Json {
 
         public static JSONObject cleanJson() {

@@ -3,40 +3,55 @@ package com.sourcey.materiallogindemo.Views.Pages;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.sourcey.materiallogindemo.Http.Clients.HomeClient;
+import com.sourcey.materiallogindemo.Http.Clients.OnResponseListener;
+import com.sourcey.materiallogindemo.Models.Restaurant;
 import com.sourcey.materiallogindemo.Views.Authentication.LoginActivity;
 import com.sourcey.materiallogindemo.R;
+import com.sourcey.materiallogindemo.Views.Components;
+import com.sourcey.materiallogindemo.Views.SimpleActivity;
+
+import java.util.ArrayList;
 
 
-public class MainActivity extends ActionBarActivity {
+public class HomeActivity extends SimpleActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//        Intent intent = new Intent(this, LoginActivity.class);
+//        startActivity(intent);
 
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        HomeClient.getHomeBanners(new OnResponseListener() {
+            @Override
+            public void onSuccess(Object[] objects) {
+                Restaurant restaurant = (Restaurant) objects[0];
+                Log.d("name", restaurant.getName());
+            }
+
+            @Override
+            public void onFailed(int responseCode) {
+
+            }
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }

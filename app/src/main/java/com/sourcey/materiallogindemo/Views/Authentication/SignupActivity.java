@@ -11,9 +11,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sourcey.materiallogindemo.Http.Clients.AuthClient;
+import com.sourcey.materiallogindemo.Http.Clients.OnResponseListener;
 import com.sourcey.materiallogindemo.Models.User;
 import com.sourcey.materiallogindemo.R;
-import com.sourcey.materiallogindemo.Views.UI.Components;
+import com.sourcey.materiallogindemo.Views.Components;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -83,9 +84,9 @@ public class SignupActivity extends AppCompatActivity {
         user.setEmail(email);
         user.setPassword(password);
 
-        AuthClient.authorization(user, new AuthClient.OnResponseListener() {
+        AuthClient.authorization(user, new OnResponseListener() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(Object[] objects) {
                 onSignupSuccess();
                 progressDialog.dismiss();
             }
