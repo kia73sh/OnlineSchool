@@ -3,12 +3,46 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    xmlns:app="j"
+    style="@style/all_theme"
+
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context=".Views.Pages.HomeActivity">
+   >
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_height="wrap_content"
+        android:background="#0B5F81"
+        android:layout_width="match_parent"
+       >
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+           >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/ic_account"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/Acc"
+                    android:layout_marginLeft="5dp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="درس"
+                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#ffffff" />
+            </RelativeLayout>
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
 
     <com.daimajia.slider.library.SliderLayout
         android:id="@+id/slider"
@@ -22,7 +56,7 @@
         custom:indicator_visibility="visible"
         custom:pager_animation_span="1100"
         android:layout_height="200dp"
-        android:background="#ffffaf0c" />"
+        android:background="#ffffaf0c" />
 
     <ListView
         android:layout_width="wrap_content"

@@ -2,6 +2,7 @@ package com.sourcey.materiallogindemo.Views.Authentication;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v4.util.ArrayMap;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -10,17 +11,35 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sourcey.materiallogindemo.Http.Clients.AuthClient;
-import com.sourcey.materiallogindemo.Http.Clients.OnResponseListener;
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.sourcey.materiallogindemo.Config.Paths;
 import com.sourcey.materiallogindemo.Models.User;
 import com.sourcey.materiallogindemo.R;
 import com.sourcey.materiallogindemo.Views.Components;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class SignupActivity extends AppCompatActivity {
 
+    Paths url ;
+    RequestQueue queue;
     private static final String TAG = "SignupActivity";
 
     @Bind(R.id.input_name) EditText nameText;
@@ -33,6 +52,8 @@ public class SignupActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+        queue = Volley.newRequestQueue(SignupActivity.this);
+        url = new Paths();
         initUI();
     }
 
@@ -80,23 +101,12 @@ public class SignupActivity extends AppCompatActivity {
         String name = nameText.getText().toString();
         String email = emailText.getText().toString();
         String password = passwordText.getText().toString();
+        // user sign up data model
         user.setName(name);
         user.setEmail(email);
         user.setPassword(password);
 
-        AuthClient.authorization(user, new OnResponseListener() {
-            @Override
-            public void onSuccess(Object[] objects) {
-                onSignupSuccess();
-                progressDialog.dismiss();
-            }
 
-            @Override
-            public void onFailed(int responseCode) {
-                onSignupFailed();
-                progressDialog.dismiss();
-            }
-        });
 
     }
 
@@ -110,6 +120,73 @@ public class SignupActivity extends AppCompatActivity {
         Toast.makeText(getBaseContext(), "خطایی رخ داده", Toast.LENGTH_LONG).show();
 
         signupButton.setEnabled(true);
+    }
+
+    // here add sign up method
+    public void LoginReq(User SignUpUser){
+        JSONObject bodyParams = new JSONObject();
+        try {
+
+            // here should send SignUp Data
+            bodyParams.put("Email",SignUpUser.getEmail());
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url.SIGNUP_URL,bodyParams, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                // here get Response
+
+                //response.getString("Message"));
+
+
+                // after saving response
+                onSignupSuccess();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                int type=0;
+                if (error instanceof TimeoutError) {
+                    type=1;
+
+                }
+                else if(error instanceof NoConnectionError){
+                    type=2;
+
+                }
+                else if (error instanceof ServerError) {
+                    type=3;
+
+                    //TODO
+                } else if (error instanceof NetworkError) {
+                    type=4;
+
+                }
+                onSignupFailed();
+
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String,String> headers = new ArrayMap<String, String>();
+
+                return headers;
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(35000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(request);
     }
 
     public boolean validate() {
